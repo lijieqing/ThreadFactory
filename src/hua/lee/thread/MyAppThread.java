@@ -40,4 +40,16 @@ public class MyAppThread extends Thread {
             }
         }
     }
+    public static int getThreadCreated() {
+        return created.get();
+    }
+    public static int getThreadAlive(){
+        return alive.get();
+    }
+    public static boolean getDebug(){
+        return debugLifecycle;
+    }
+    public static void setDebug(boolean b) {
+        debugLifecycle = b;
+    }
 }

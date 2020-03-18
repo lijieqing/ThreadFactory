@@ -14,4 +14,7 @@ public class Logger{
     public void log(int level,String log){
         System.out.println(defalutName+": "+log);
     }
+    public void fine(String log){
+        System.out.println(defalutName+": "+log);
+    }
 }
