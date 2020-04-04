@@ -28,7 +28,7 @@ public class SwingUtilities {
     }
 
     public static void invokeAndWait(Runnable task) throws InvocationTargetException, InterruptedException {
-        Future f = exec.submit(task);
+        Future<?> f = exec.submit(task);
         try {
             f.get();
         } catch (ExecutionException e) {

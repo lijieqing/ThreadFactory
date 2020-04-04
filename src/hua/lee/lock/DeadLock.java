@@ -1,4 +1,4 @@
-package hua.lee.thread;
+package hua.lee.lock;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
