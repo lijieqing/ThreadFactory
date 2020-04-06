@@ -5,19 +5,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
 
 public class SwingUtilities {
     private static final ExecutorService exec = Executors.newSingleThreadScheduledExecutor();
     private static volatile Thread swingThread;
-
-    private static class SwingThreadFactory implements ThreadFactory {
-        @Override
-        public Thread newThread(Runnable r) {
-            swingThread = new Thread(r);
-            return swingThread;
-        }
-    }
 
     public static boolean isEventDispatchThread() {
         return Thread.currentThread() == swingThread;
