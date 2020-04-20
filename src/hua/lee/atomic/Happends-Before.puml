@@ -1,0 +1,13 @@
+@startuml
+"Thread A" --> "y=1"
+"y=1" --> Lock M
+"Lock M" --> "x=1"
+"x=1" --> "unLock M"
+@enduml
+
+@startuml
+"Thread B" --> Lock M
+"Lock M" --> "i=x"
+"i=x" --> "unLock M"
+"unLock M" --> j=y
+@enduml

@@ -1,6 +1,5 @@
 package hua.lee.atomic;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class LinkedQueue<E> {
@@ -18,7 +17,8 @@ public class LinkedQueue<E> {
         final AtomicReference<Node<E>> next;
 
         /**
-         *  Node 构造方法
+         * Node 构造方法
+         *
          * @param item 数据元素
          * @param next 下一个节点
          */
@@ -43,16 +43,16 @@ public class LinkedQueue<E> {
 
     /**
      * 将数据元素放入链表尾部
-     *
+     * <p>
      * 在插入新元素之前，将首先检查tail 指针是否处于队列中间状态，
      * 如果是，那么说明有另一个线程正在插入元素。
-     *      此时线程不会等待其他线程执行完成，而是帮助他完成操作，将 tail 指针指向下一个节点。
-     *      然后重复进行检查确认，直到 tail 完全处于队列尾部才开始执行自己的插入操作。
+     * 此时线程不会等待其他线程执行完成，而是帮助他完成操作，将 tail 指针指向下一个节点。
+     * 然后重复进行检查确认，直到 tail 完全处于队列尾部才开始执行自己的插入操作。
      * 如果两个线程同时插入元素，curTail.next.compareAndSet 会失败，这种情况下不会对当前数据结构造成破坏。当前线程只需重新读取tail 并再次重试。
      * 如果curTail.next.compareAndSet执行成功，那么插入操作已生效。
      * 此时 tail.compareAndSet(curTail, newNode) 会进行尾部指针的移动：
-     *      如果移动失败，那么当前线程将直接返回，不需要进行重试
-     *      因为另一个线程在检查 tail 时候会帮助更新。
+     * 如果移动失败，那么当前线程将直接返回，不需要进行重试
+     * 因为另一个线程在检查 tail 时候会帮助更新。
      *
      * @param item 数据元素
      * @return true 成功
