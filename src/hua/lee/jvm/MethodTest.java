@@ -5,10 +5,17 @@ public class MethodTest {
         Lava lava = new Lava();
         lava.flow();
     }
-    
+
 }
 
-class Lava{
+class Lava {
     private int speed = 5;
-    void flow(){}
+    
+    public Lava() {
+        System.out.println("lava constructor speed" + speed);
+    }
+
+    void flow() {
+        System.out.println("lava after init speed" + speed);
+    }
 }
