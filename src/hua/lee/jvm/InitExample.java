@@ -35,8 +35,13 @@ class ExampleD {
     }
 }
 class ExampleE{
+    private static final boolean debug = false;
+    private static final String def = "ABC";
+    private static String val = def;
     public static void main(String[] args) {
-        String a = "ABC";
+        if (debug){
+            System.out.println("hello");
+        }
     }
 }
 

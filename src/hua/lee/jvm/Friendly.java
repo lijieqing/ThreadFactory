@@ -5,8 +5,8 @@ public interface Friendly {
     void sayGoodbye();
 }
 
-class Dog{
-    private final int wagCount = (int) (Math.random() * 5 + 1);
+class Dogs{
+    private int wagCount = (int) (Math.random() * 5 + 1);
 
     void sayHello() {
         System.out.print("wag");
@@ -22,7 +22,7 @@ class Dog{
     }
 }
 
-class CockerSpaniel extends Dog implements Friendly {
+class CockerSpaniel extends Dogs implements Friendly {
 
     private final int woofCount = (int) (Math.random() * 4 + 1);
     private final int wimperCount = (int) (Math.random() * 3 + 1);
@@ -68,7 +68,7 @@ class Cat implements Friendly{
 
 class Test{
     public static void main(String[] args) {
-        Dog d = new Dog();
+        Dogs d = new Dogs();
         Cat c = new Cat();
         CockerSpaniel cs = new CockerSpaniel();
         d.sayHello();
