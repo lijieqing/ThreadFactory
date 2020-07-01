@@ -3,6 +3,7 @@ package hua.lee.jvm;
 public interface Angry {
     String greeting = "Grrrr!";
     int angerLevel = Dog.getAngerLevel();
+    void shit();
 }
 class Dog{
     static final String greeting = "woof woof world";
@@ -49,18 +50,32 @@ class ExampleCons extends Example{
         System.out.println("ExampleCons(String),width = " + width);
         System.out.println(msg);
     }
-
-    public static void main(String[] args) {
-        String msg = "Test Constructor MSG";
-        ExampleCons one = new ExampleCons();
-        ExampleCons two = new ExampleCons(2);
-        ExampleCons three = new ExampleCons(msg);
-    }
 }
 
 class MyThread extends Thread implements Cloneable{
 }
 
-class StaticTest{
+class DadAngry implements Angry{
     static int len = 9;
+    @Override
+    public void shit() {
+        System.out.println("dad angry!");
+    }
+}
+class MomAngry implements Angry{
+    static int len = 9;
+    @Override
+    public void shit() {
+        System.out.println("mom angry!");
+    }
+}
+
+class AngryTest{
+    public static void main(String[] args) {
+        String ang = "zero";
+        Angry angry = new DadAngry();
+        angry.shit();
+        angry = new MomAngry();
+        angry.shit();
+    }
 }
