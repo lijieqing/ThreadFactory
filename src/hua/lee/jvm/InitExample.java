@@ -62,3 +62,10 @@ class ExampleF{
         }
     }
 }
+
+class ExampleG{
+    final static int a;
+    static {
+        a = 10;
+    }
+}
