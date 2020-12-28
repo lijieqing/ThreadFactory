@@ -1,0 +1,36 @@
+@startuml
+class LoadedArsc {
+    // 全局字符串池
+    ResStringPool global_string_pool_;
+    // packages，对应类型为RES_TABLE_PACKAGE_TYPE的chunk
+    std::vector<std::unique_ptr<const LoadedPackage>> packages_;
+    // 是否是系统资源
+    bool system_ = false;
+}
+class LoadedPackage {
+    // 资源类型字符串池
+    ResStringPool type_string_pool_;
+    // 资源名称字符串池
+    ResStringPool key_string_pool_;
+    // 包名
+    std::string package_name_;
+}
+class ApkAssets {
+    //一个智能指针，表示一个压缩包，也就是我们的APK
+    ZipArchivePtr zip_handle_;
+
+    //apk的路径
+    const std::string path_;
+
+    //一个智能指针，表示APK中resources.arsc文件
+    std::unique_ptr<Asset> resources_asset_;
+
+    //一个智能指针，表示一个idmap文件
+    std::unique_ptr<Asset> idmap_asset_;
+
+    //一个智能指针，表示一个resources.arsc加载解析后的数据结构
+    std::unique_ptr<const LoadedArsc> loaded_arsc_;
+}
+ApkAssets *- LoadedArsc
+LoadedArsc *- LoadedPackage
+@enduml

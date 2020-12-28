@@ -1,0 +1,21 @@
+@startuml
+
+
+
+package "Other Groups" {
+FTP - [Second Component]
+
+[First Component] --> FTP
+}
+
+package "AssetManager2"{
+apk_assets_ - [ApkAssets Vector]
+}
+package "ApkAssets"{
+loaded_arsc - [LoadedArsc]
+resources_arsc - [resources.arsc file]
+}
+package "LoadedArsc"{
+
+}
+@enduml

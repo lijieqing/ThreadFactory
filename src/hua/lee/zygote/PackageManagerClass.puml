@@ -1,0 +1,31 @@
+@startuml
+
+interface IPackageManager
+interface IBinder
+
+class IPackageManager.Stub
+class IPackageManager.Stub.Proxy
+class Binder implements IBinder
+class PackageManagerService
+class ActivityThread{
+- IPackageManager sPackageManager
+}
+class PackageManager
+class ApplicationPackageManager{
+- IPackageManager mPM
+}
+
+IPackageManager <|-- IPackageManager.Stub
+IPackageManager <|-- IPackageManager.Stub.Proxy
+
+IPackageManager.Stub.Proxy <--o ActivityThread
+IPackageManager.Stub <|-- PackageManagerService
+
+ApplicationPackageManager -up-|> PackageManager
+ApplicationPackageManager *-left-> ActivityThread
+
+IPackageManager.Stub -up-|> Binder
+
+
+
+@enduml

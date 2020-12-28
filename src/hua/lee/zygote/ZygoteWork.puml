@@ -1,0 +1,27 @@
+@startuml
+-> ZygoteInit: main()
+ZygoteInit -> ZygoteServer: registerServerSocketFromEnv()
+ZygoteInit -> ZygoteServer: runSelectLoop()
+
+ZygoteServer -> ZygoteServer: Os.poll()
+
+ZygoteServer -> ZygoteConnection: acceptCommandPeer()
+ZygoteServer -> ZygoteConnection: processOneCommand()
+
+ZygoteConnection -> ZygoteConnection: readArgumentList()
+ZygoteConnection -> Zygote: forkAndSpecialize()
+
+ZygoteConnection -> ZygoteConnection: handleChildProc()
+
+ZygoteConnection -> ZygoteInit: zygoteInit()
+ZygoteInit -> RuntimeInit: commonInit()
+ZygoteInit -> ZygoteInit: nativeZygoteInit()
+ZygoteInit -> RuntimeInit: applicationInit()
+
+RuntimeInit -> RuntimeInit: findStaticMain()
+
+RuntimeInit -> ZygoteServer: return new MethodAndArgsCaller()
+ZygoteServer -> ZygoteInit: return command;
+
+ZygoteInit -> ZygoteInit: caller.run()
+@enduml

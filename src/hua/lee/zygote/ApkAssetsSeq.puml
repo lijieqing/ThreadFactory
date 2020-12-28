@@ -1,0 +1,20 @@
+@startuml
+ApkAssets.java -> ApkAssets.cpp: NativeLoad()
+ApkAssets.cpp --> ApkAssets.cpp: LoadImpl()
+
+ApkAssets.cpp --> ApkAssets.cpp: OpenArchive("res.apk")
+
+ApkAssets.cpp --> ApkAssets.cpp: resources_asset_=Open():open resources.arsc file
+
+ApkAssets.cpp --> LoadedArsc.cpp: Load(): start parse resources.arsc
+
+LoadedArsc.cpp --> LoadedArsc.cpp: LoadTable()
+LoadedArsc.cpp --> LoadedArsc.cpp: global_string_pool_.set()
+LoadedArsc.cpp --> LoadedPackage.cpp: Load and parse package chunk
+LoadedPackage.cpp --> LoadedPackage.cpp: parseRES_STRING_POOL_TYPE
+LoadedPackage.cpp --> LoadedPackage.cpp: parseRES_TABLE_TYPE_SPEC_TYPE
+LoadedPackage.cpp --> LoadedPackage.cpp: parseRES_TABLE_TYPE_TYPE
+LoadedPackage.cpp --> LoadedPackage.cpp: parseRES_TABLE_LIBRARY_TYPE
+
+LoadedPackage.cpp --> ApkAssets.cpp: loaded_arsc_= loaded_data
+@enduml
