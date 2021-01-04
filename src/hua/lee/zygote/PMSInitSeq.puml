@@ -1,0 +1,46 @@
+@startuml
+-> SystemServer:startBootstrapServices
+SystemServer -> PackageManagerService: main()
+PackageManagerService -> PackageManagerService: m = new PackageManagerService()
+activate PackageManagerService
+==BOOT_PROGRESS_PMS_START==
+PackageManagerService -> PermissionManagerService:new PermissionManagerService()：创建PermissionManagerService对象
+PackageManagerService -> Settings:new Settings()：创建Settings对象
+PackageManagerService -> Settings:readLPw() :加载 packages.xml
+PackageManagerService -> PackageHandler:new PackageHandler()：创建PackageHandler对象
+PackageManagerService -> WatchDog:addThread() : 注册Watchdog监听
+==BOOT_PROGRESS_PMS_SYSTEM_SCAN_START==
+PackageManagerService -> PackageManagerService:scanDirTracedLI(/vendor/overlay)
+PackageManagerService -> PackageManagerService:scanDirTracedLI(/product/overlay)
+PackageManagerService -> PackageManagerService:scanDirTracedLI(/system/frameworks)
+PackageManagerService -> PackageManagerService:scanDirTracedLI(appPath)
+note right
+scanDirTracedLI(appPath)扫描的路径包括：
+/system/priv-app、/system/app、
+/vendor/priv-app、/vendor/app、
+/odm/priv-app、/odm/app、/oem/app、
+/product/priv-app、/product/app
+end note
+PackageManagerService -> PackageManagerService:扫描完成后，解析比对mPackages和mSettings中的数据
+PackageManagerService -> PackageManagerService:deleteTempPackageFiles()：移除临时文件
+PackageManagerService -> Settings:pruneSharedUsersLPw()：移除没有关联任何应用的SharedUserSetting对象
+==BOOT_PROGRESS_PMS_DATA_SCAN_START==
+PackageManagerService -> PackageManagerService:scanDirTracedLI(/data/app-private)
+PackageManagerService -> PackageManagerService:scanDirTracedLI(/data/app)
+PackageManagerService -> PackageManagerService:检查 possiblyDeletedUpdatedSystemApps 集合的应用
+PackageManagerService -> Settings:removeDisabledSystemPackageLPw()：移除无效应用标签
+PackageManagerService -> PackageManagerService:检查 mExpectingBetter 集合的应用
+PackageManagerService -> Settings:enableSystemPackageLPw()：将有效应用添加至packages.xml
+PackageManagerService -> PackageManagerService:decompressSystemApplications()
+PackageManagerService -> PackageManagerService:updateAllSharedLibrariesLPw()
+==BOOT_PROGRESS_PMS_SCAN_END==
+PackageManagerService -> PermissionManagerService:updateAllPermissions()：更新应用的权限
+PackageManagerService -> Settings:writeLPr()：数据保存到packages.xml
+==BOOT_PROGRESS_PMS_READY==
+PackageManagerService -> PackageInstallerService:new PackageInstallerService()：初始化PackageInstallerService对象
+PackageManagerService -> PackageManagerService:Runtime.getRuntime().gc();
+deactivate PackageManagerService
+PackageManagerService -> ServiceManager:addService("package")
+SystemServer <- PackageManagerService:return m;
+
+@enduml

@@ -1,0 +1,46 @@
+@startuml
+class PackageSetting{
+ ~ PackageParser.Package pkg;
+ ....
+ ~ SharedUserSetting sharedUser;
+}
+class PackageSettingBase{
+    + final String name;
+    ~ final String realName;
+    ~ File codePath;
+    ~ String codePathString;
+    ~ File resourcePath;
+    ~ String resourcePathString;
+    ~ long timeStamp;
+    ~ long firstInstallTime;
+    ~ long lastUpdateTime;
+    ~ long versionCode;
+}
+abstract class SettingBase{
+    + int pkgFlags;
+    + int pkgPrivateFlags;
+    ~ final PermissionsState mPermissionsState;
+}
+class SharedUserSetting{
+    ~ final String name;
+    ~ int userId;
+    ~ int uidFlags;
+    ~ int uidPrivateFlags;
+    ~ final ArraySet<PackageSetting> packages = new ArraySet<PackageSetting>();
+    ~ final PackageSignatures signatures = new PackageSignatures();
+}
+class PackageSignatures {
+    ~ PackageParser.SigningDetails mSigningDetails;
+}
+class SigningDetails{
+    + final Signature[] signatures;
+}
+
+
+SharedUserSetting -up-|> SettingBase
+PackageSignatures o-left- SigningDetails
+SharedUserSetting o-- PackageSignatures
+PackageSetting o-right- SharedUserSetting
+PackageSetting -up-|> PackageSettingBase
+PackageSettingBase -right-|> SettingBase
+@enduml
