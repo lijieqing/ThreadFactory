@@ -1,0 +1,41 @@
+@startuml
+abstract class HandlerParams{
+    {method}final startCopy()
+    ..
+    {abstract} void handleStartCopy();
+    ..
+    {abstract} void handleReturnCode();
+    ..
+}
+class InstallParams extends HandlerParams{
+    {field}- InstallArgs mArgs
+    --
+    {method} void handleStartCopy();
+    ..
+    {method} void handleReturnCode();
+}
+abstract class InstallArgs{
+    {abstract} int copyApk(IMediaContainerService imcs, boolean temp);
+    ..
+    {abstract} int doPreInstall(int status);
+    ..
+    {abstract} int doPostInstall(int status, int uid);
+}
+class FileInstallArgs{
+    {method} int copyApk(IMediaContainerService imcs, boolean temp);
+    ..
+    {method} int doPreInstall(int status);
+    ..
+    {method} int doPostInstall(int status, int uid);
+}
+class MoveInstallArgs{
+    {method} int copyApk(IMediaContainerService imcs, boolean temp);
+    ..
+    {method} int doPreInstall(int status);
+    ..
+    {method} int doPostInstall(int status, int uid);
+}
+InstallParams o-> InstallArgs
+FileInstallArgs -down-|> InstallArgs
+MoveInstallArgs -up-|> InstallArgs
+@enduml

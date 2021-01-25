@@ -1,0 +1,33 @@
+@startuml
+ -> PackageManagerService:installStage()
+==第一阶段==
+activate PackageManagerService
+PackageManagerService -> PackageManagerService:INIT_COPY
+PackageManagerService -> PackageManagerService:MCS_BOUND
+PackageManagerService -> InstallParams:startCopy
+activate InstallParams
+InstallParams -> InstallParams:handleStartCopy
+activate InstallParams
+InstallParams -> FileInstallArgs:copyApk
+activate FileInstallArgs
+FileInstallArgs -> DefaultContainerService:copyResource
+activate DefaultContainerService
+FileInstallArgs <-- DefaultContainerService:copyResource
+deactivate DefaultContainerService
+InstallParams <-- FileInstallArgs
+deactivate FileInstallArgs
+deactivate InstallParams
+==第二阶段==
+InstallParams -> InstallParams:handleReturnCode
+activate InstallParams
+InstallParams -> InstallParams:processPendingInstall
+PackageManagerService <-- InstallParams:POST
+deactivate InstallParams
+activate PackageManagerService
+PackageManagerService -> PackageManagerService:installPackageLI
+deactivate PackageManagerService
+PackageManagerService -> PackageManagerService:POST_INSTALL
+deactivate PackageManagerService
+
+
+@enduml
