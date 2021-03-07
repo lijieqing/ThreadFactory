@@ -1,0 +1,32 @@
+@startuml
+
+abstract class Context
+class ContextImpl{
+    ~ final ActivityThread mMainThread;
+    ..
+    - Display mDisplay;
+}
+class ContextWrapper{
+    Context mBase;
+}
+class Service
+class ContextThemeWrapper{
+    - Resources.Theme mTheme;
+    ..
+    - Resources mResources;
+}
+class Activity
+class Application{
+    + LoadedApk mLoadedApk;
+}
+
+ContextWrapper -up-|> Context
+ContextImpl -up-|> Context
+ContextWrapper o-right-> ContextImpl
+
+ContextThemeWrapper -right-|> ContextWrapper
+Activity -up-|> ContextThemeWrapper
+
+Service -up-|> ContextWrapper
+Application -up-|> ContextWrapper
+@enduml

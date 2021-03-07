@@ -1,0 +1,16 @@
+@startuml
+APP -> ActivityManagerService: bindService()
+ActivityManagerService --> ActiveServices: bindServiceLocked()
+ActiveServices --> ActiveServices: bringUpServiceLocked()
+ActiveServices --> ActiveServices: realStartServiceLocked()
+ActiveServices --> IApplicationThread: scheduleCreateService()
+IApplicationThread --> ActivityThread: handleCreateService()
+ActivityThread --> Service: onCreate()
+ActiveServices --> ActiveServices: requestServiceBindingLocked()
+ActiveServices --> IApplicationThread: scheduleBindService()
+IApplicationThread --> ActivityThread: handleBindService()
+ActivityThread --> Service: onBind()
+ActivityManagerService <-- ActivityThread: publishService()
+ActivityManagerService --> ActiveServices: publishServiceLocked()
+ActiveServices --> APP: IServiceConnection.connected()
+@enduml

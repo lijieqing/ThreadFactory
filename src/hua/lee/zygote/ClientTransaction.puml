@@ -1,0 +1,57 @@
+@startuml
+
+abstract class ClientTransactionHandler
+abstract class ClientTransactionItem
+class ClientTransaction{
+    private List<ClientTransactionItem> mActivityCallbacks;
+    ..
+    private ActivityLifecycleItem mLifecycleStateRequest;
+    ..
+    private IApplicationThread mClient;
+    ..
+    private IBinder mActivityToken;
+    --
+    public void schedule();
+ }
+interface BaseClientRequest{
+    default void preExecute(ClientTransactionHandler client, IBinder token)
+    --
+    void execute(ClientTransactionHandler client, IBinder token, PendingTransactionActions pendingActions)
+    --
+    default void postExecute(ClientTransactionHandler client, IBinder token, PendingTransactionActions pendingActions)
+}
+() Parcelable
+ClientTransactionItem .up.|> BaseClientRequest
+ClientTransactionItem .left. Parcelable
+ClientTransaction .right. Parcelable
+
+abstract class ActivityLifecycleItem extends ClientTransactionItem {
+    public static final int UNDEFINED = -1;
+    public static final int PRE_ON_CREATE = 0;
+    public static final int ON_CREATE = 1;
+    public static final int ON_START = 2;
+    public static final int ON_RESUME = 3;
+    public static final int ON_PAUSE = 4;
+    public static final int ON_STOP = 5;
+    public static final int ON_DESTROY = 6;
+    public static final int ON_RESTART = 7;
+    --
+    public abstract int getTargetState();
+}
+LaunchActivityItem -up-|> ClientTransactionItem
+ResumeActivityItem -up-|> ActivityLifecycleItem
+PauseActivityItem  -up-|>  ActivityLifecycleItem
+StopActivityItem  -up-|>  ActivityLifecycleItem
+DestroyActivityItem  -up-|>  ActivityLifecycleItem
+ClientTransactionHandler *-up- ClientTransaction
+ActivityThread -up-|> ClientTransactionHandler
+
+class ClientLifecycleManager{
+    void scheduleTransaction(ClientTransaction transaction);
+}
+
+ClientLifecycleManager *-right- ClientTransaction
+ActivityManagerService *-up- ClientLifecycleManager
+
+
+@enduml
