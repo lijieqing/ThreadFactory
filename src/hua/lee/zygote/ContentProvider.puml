@@ -1,0 +1,18 @@
+@startuml
+class Binder
+interface IContentProvider
+() IInterface
+() IBinder
+Binder .up. IBinder
+IContentProvider .up. IInterface
+
+abstract class ContentProviderNative
+ContentProviderNative -up-|> Binder
+ContentProviderNative .up.|> IContentProvider
+class Transport extends ContentProviderNative
+
+class ContentProviderProxy
+ContentProviderProxy .up.-|> IContentProvider
+
+ContentProviderNative *.right. ContentProviderProxy
+@enduml

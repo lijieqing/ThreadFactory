@@ -1,0 +1,18 @@
+@startuml
+-> Context: sendBroadcast()
+Context -> ContextImpl: sendBroadcast()
+ContextImpl -> ActivityManagerService: broadcastIntent()
+ActivityManagerService -> ActivityManagerService: broadcastIntentLocked()
+ActivityManagerService -> BroadcastQueue: scheduleBroadcastsLocked()
+BroadcastQueue -> BroadcastQueue: processNextBroadcast()
+BroadcastQueue -> BroadcastQueue: processNextBroadcastLocked()
+BroadcastQueue -> BroadcastQueue: deliverToRegisteredReceiverLocked()
+BroadcastQueue -> BroadcastQueue: performReceiveLocked()
+BroadcastQueue -> ActivityThread: scheduleRegisteredReceiver()
+ActivityThread -> LoadedApk.ReceiverDispatcher.InnerReceiver: performReceive()
+LoadedApk.ReceiverDispatcher.InnerReceiver -> LoadedApk.ReceiverDispatcher: performReceive()
+LoadedApk.ReceiverDispatcher -> LoadedApk.ReceiverDispatcher.Args: run()
+LoadedApk.ReceiverDispatcher.Args -> BroadcastReceiver: onReceive()
+
+
+@enduml
