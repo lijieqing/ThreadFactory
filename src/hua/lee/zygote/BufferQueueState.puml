@@ -1,0 +1,38 @@
+@startuml
+state SHARED{
+    state DEQUEUED {
+    }
+    state QUEUED {
+    }
+    state ACQUIRED {
+    }
+}
+state FREE {
+}
+
+
+FREE -left-> DEQUEUED
+DEQUEUED -right-> FREE
+DEQUEUED -right-> QUEUED
+QUEUED -right-> ACQUIRED
+QUEUED -down-> FREE
+ACQUIRED -down-> FREE
+
+
+note left of FREE
+  被 BufferQueueCore 持有
+end note
+note top of DEQUEUED
+  被 Producer 持有
+end note
+note top of QUEUED
+  被 BufferQueueCore 持有
+end note
+note top of ACQUIRED
+  被 Consumer 持有
+end note
+note bottom of SHARED
+  SHARED 表示缓冲区正在共享缓冲区模式下使用
+  可以与 DEQUEUED、QUEUED、ACQUIRED 共存
+end note
+@enduml

@@ -1,0 +1,58 @@
+@startuml
+box producer
+Surface -> BufferQueueProducer: dequeueBuffer()
+end box
+BufferQueueProducer --> BufferQueueCore
+Surface <-- BufferQueueProducer:
+note over Surface
+调用 Surface 的 dequeueBuffer() 申请一个空闲 BufferSlot
+此时缓冲区的拥有者变为 producer，并进入 DEQUEUED 状态
+end note
+
+Surface -> BufferQueueProducer: requestBuffer()
+BufferQueueProducer --> BufferQueueCore:
+Surface <-- BufferQueueProducer:
+
+note over Surface
+得到空闲 BufferSlot 后需要通过
+requestBuffer() 来取得一个 GraphicBuffer 的句柄
+后面会通过 GraphicBuffer 的句柄来写入图像数据
+得到的缓冲区如果不需要了，需要使用 cancelBuffer()  来释放
+执行过 cancelBuffer() 后
+slot 会被返回到 BufferQueueCore，进入 FREE 状态
+end note
+
+Surface -> BufferQueueProducer: queueBuffer()
+BufferQueueProducer --> BufferQueueCore:
+Surface <-- BufferQueueProducer:
+
+note over Surface
+完成缓冲区的数据写入后
+调用 queueBuffer() 将缓冲区交换给 BufferQueueCore
+这时缓冲区进入 QUEUED 状态
+end note
+
+box consumer
+BufferQueueConsumer -> SurfaceFlinger: onFrameAvailable()
+end box
+note over SurfaceFlinger
+当 BufferQueue 中有数据准备好
+会调用 onFrameAvailable()
+通知消费者取走数据
+end note
+SurfaceFlinger -> BufferQueueConsumer: acquireBuffer()
+BufferQueueConsumer --> BufferQueueCore:
+BufferQueueConsumer --> SurfaceFlinger:
+note over SurfaceFlinger
+通过 acquireBuffer() 取走数据
+此时缓冲区进入 ACQUIRED 状态
+end note
+SurfaceFlinger -> BufferQueueConsumer: releaseBuffer()
+BufferQueueConsumer --> BufferQueueCore:
+note over SurfaceFlinger
+使用完数据
+通过 releaseBuffer() 将缓冲区归还
+通过 acquireBuffer() 取走数据
+此时缓冲区进入 FREE 状态
+end note
+@enduml

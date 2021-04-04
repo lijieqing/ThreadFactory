@@ -1,0 +1,37 @@
+@startuml
+-> Activity: onResume()
+Activity -[#green]-> ViewRootImpl: new ViewRootImpl()
+activate ViewRootImpl #green
+ViewRootImpl -[#green]-> Surface: mSurface = new Surface()
+ViewRootImpl -[#green]-> WindowManagerService: openSession()
+WindowManagerService -[#green]-> Session: new Session()
+deactivate ViewRootImpl
+
+Activity -[#blue]-> ViewRootImpl: viewRoot.setView()
+activate ViewRootImpl  #blue
+ViewRootImpl -[#blue]-> ViewRootImpl: viewRoot.performTraversals()
+ViewRootImpl -[#blue]-> Session: session.relayout()
+Session -[#blue]-> WindowManagerService: relayoutWindow()
+WindowManagerService -[#blue]-> WindowManagerService: createSurfaceControl()
+WindowManagerService -[#blue]-> SurfaceControl:mSurfaceControl=new SurfaceControl()
+SurfaceControl -[#blue]-> android_view_SurfaceControl.cpp: mNativeObject=nativeCreate()
+android_view_SurfaceControl.cpp -[#blue]-> SurfaceComposerClient: createSurfaceChecked()
+SurfaceComposerClient -[#blue]-> Client: createSurface()
+Client -[#blue]-> SurfaceFlinger: createLayer()
+SurfaceFlinger -[#blue]-> SurfaceFlinger: createBufferLayer()\n或\n createColorLayer()
+SurfaceFlinger -[#blue]-> BufferLayer: layer = new BufferLayer()
+BufferLayer -[#blue]-> MonitoredProducer: new MonitoredProducer()
+SurfaceFlinger -[#blue]-> BufferLayer: gbp = layer -> getProducer()
+SurfaceControl -[#blue]-> Surface: mSurface.copyFrom(mSurfaceControl)
+deactivate ViewRootImpl
+
+Activity -[#2fe]-> ViewRootImpl: viewRoot.setView()
+activate ViewRootImpl #2fe
+ViewRootImpl -[#2fe]-> Session: session.addToDisplay()
+Session -[#2fe]-> WindowManagerService: addWindow()
+WindowManagerService -[#2fe]-> Session: session.windowAddedLocked()
+Session -[#2fe]-> SurfaceSession: mSurfaceSession = new SurfaceSession()
+SurfaceSession -[#2fe]-> android_view_SurfaceSession.cpp: mNativeClient=nativeCreate()
+android_view_SurfaceSession.cpp -[#2fe]-> SurfaceComposerClient: new SurfaceComposerClient()
+deactivate ViewRootImpl
+@enduml

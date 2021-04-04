@@ -1,0 +1,122 @@
+@startuml
+class SurfaceFlinger
+class BnSurfaceComposer
+class HWC2::ComposerCallback{
+    onHotplugReceived()
+    ..
+    onRefreshReceived()
+    ..
+    onVsyncReceived()
+}
+
+SurfaceFlinger -right-|> BnSurfaceComposer
+SurfaceFlinger -down-|> HWC2::ComposerCallback
+SurfaceFlinger -down-|> PriorityDumper
+SurfaceFlinger -down-|> IBinder::DeathRecipient
+class BnInterface<ISurfaceComposer>
+class ISurfaceComposer{
+    sp<ISurfaceComposerClient> createConnection()
+    ..
+    sp<ISurfaceComposerClient> createScopedConnection()
+    ..
+    sp<IDisplayEventConnection> createDisplayEventConnection()
+    ..
+    sp<IBinder> createDisplay()
+    ..
+    void destroyDisplay()
+    ..
+    sp<IBinder> getBuiltInDisplay()
+}
+BnSurfaceComposer -right-|> BnInterface
+BnInterface -right- ISurfaceComposer
+
+class Client
+class BnSurfaceComposerClient
+class SafeBnInterface<ISurfaceComposerClient>
+class ISurfaceComposerClient{
+    status_t createSurface()
+    ..
+    status_t destroySurface()
+    ..
+    status_t clearLayerFrameStats()
+    ..
+    status_t getLayerFrameStats()
+}
+
+Client -up-|> BnSurfaceComposerClient
+BnSurfaceComposerClient -up-|> SafeBnInterface
+SafeBnInterface -up- ISurfaceComposerClient
+
+note as sfNote
+Client对象会在SurfaceFlinger中进行初始化
+Client对象初始化时会持有SurfaceFlinger对象的指针
+SurfaceFlinger通过createConnection()返回Client对象
+end note
+sfNote .right. SurfaceFlinger
+Client .right. sfNote
+
+class BufferQueue{
+    void createBufferQueue(sp<IGraphicBufferProducer>* outProducer,\n\t\t\t sp<IGraphicBufferConsumer>* outConsumer,\n\t\t\t bool consumerIsSurfaceFlinger = false)
+    ..
+}
+
+class BufferQueueProducer{
+}
+class BnGraphicBufferProducer{
+}
+class IGraphicBufferProducer{
+    status_t requestBuffer()
+    ..
+    status_t dequeueBuffer()
+    ..
+    status_t queueBuffer()
+}
+BufferQueueProducer -up-|> BnGraphicBufferProducer
+BnGraphicBufferProducer -up-|> IGraphicBufferProducer
+
+class BufferQueueConsumer{
+}
+class BnGraphicBufferConsumer{
+}
+class IGraphicBufferConsumer{
+    status_t acquireBuffer()
+    ..
+    status_t releaseBuffer()
+}
+BufferQueueConsumer -up-|> BnGraphicBufferConsumer
+BnGraphicBufferConsumer -up-|> IGraphicBufferConsumer
+
+class BufferQueueCore{
+    + BufferQueueDefs::SlotsType mSlots;
+}
+BufferQueueConsumer *-left- BufferQueueCore
+BufferQueueProducer *-right- BufferQueueCore
+
+note as bqc
+BufferQueueCore对象
+    变量SlotsType mSlots其实是一个数组
+    SlotsType中定义了存放图像数据的缓冲区
+BufferQueueConsumer对象、BufferQueueProducer对象
+    共同持有一个BufferQueueCore对象
+BufferQueue
+    更像是一个工具类，创建Core、Consumer、Producer对象
+    帮助SurfaceFlinger建立Producer和Consumer
+end note
+bqc .down. BufferQueueConsumer
+bqc .down. BufferQueueProducer
+bqc .up. BufferQueue
+
+class BufferLayer
+
+class MonitoredProducer
+MonitoredProducer *-up- BufferQueueProducer
+
+class BufferLayerConsumer
+BufferLayerConsumer *-up- BufferQueueConsumer
+
+BufferLayer *-left- MonitoredProducer
+BufferLayer *-right- BufferLayerConsumer
+
+SurfaceFlinger *-up- BufferLayer
+
+@enduml
