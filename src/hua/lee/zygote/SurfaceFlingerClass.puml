@@ -117,6 +117,11 @@ BufferLayerConsumer *-up- BufferQueueConsumer
 BufferLayer *-left- MonitoredProducer
 BufferLayer *-right- BufferLayerConsumer
 
-SurfaceFlinger *-up- BufferLayer
+class DisplayDevice
+
+Layer <|-up- BufferLayer
+DisplayDevice *-up- Layer
+
+SurfaceFlinger *-up- DisplayDevice
 
 @enduml

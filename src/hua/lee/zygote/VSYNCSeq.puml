@@ -1,0 +1,13 @@
+@startuml
+-> HWComposer: VSYNC
+HWComposer -> SurfaceFlinger: onVsyncReceived()
+SurfaceFlinger -> DispSync: onVsyncReceived()
+DispSync -> DispSyncThread: updateModel()
+DispSyncThread -> DispSyncThread: fireCallbackInvocations()
+DispSyncThread -> DispSyncSource: onDispSyncEvent()
+DispSyncSource -> EventThread: onVSyncEvent()
+EventThread --> MessageQueue: postEvent()
+MessageQueue -> MessageQueue: cb_eventReceiver()
+MessageQueue -> MessageQueue: eventReceiver()
+MessageQueue -> SurfaceFlinger: onMessageReceived()
+@enduml
