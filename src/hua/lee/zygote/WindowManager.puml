@@ -1,0 +1,72 @@
+@startuml
+interface WindowManager{
+}
+class Activity{
+    - WindowManager mWindowManager;
+    - Window mWindow;
+}
+class WindowManagerImpl{
+    - final WindowManagerGlobal mGlobal;
+}
+class WindowManagerGlobal{
+    private static WindowManagerGlobal sDefaultWindowManager;
+    private static IWindowManager sWindowManagerService;
+    private static IWindowSession sWindowSession;
+    ....
+    - final ArrayList<View> mViews;
+    - final ArrayList<ViewRootImpl> mRoots;
+    - final ArrayList<WindowManager.LayoutParams> mParams;
+}
+
+Activity o-up- WindowManagerImpl
+WindowManagerImpl .up.|> WindowManager
+WindowManagerImpl o-right- WindowManagerGlobal
+
+class ViewRootImpl{
+    - final IWindowSession mWindowSession;
+    - final W mWindow;
+    ~ View mView;
+}
+interface IWindow
+interface IWindowSession
+interface IWindowManager
+class ViewRootImpl.W{
+}
+
+ViewRootImpl o-right- ViewRootImpl.W
+ViewRootImpl o-up- IWindowSession
+ViewRootImpl.W .up.|> IWindow
+WindowManagerGlobal o-right- ViewRootImpl
+WindowManagerGlobal o-up- IWindowSession
+WindowManagerGlobal o-up- IWindowManager
+
+class Session{
+}
+note right of Session
+framework/base/services/core/java/com/android/server/wm/Session.java
+end note
+class WindowManagerService{
+}
+Session .down.|> IWindowSession
+WindowManagerService .down.|> IWindowManager
+
+abstract class Window{
+    + abstract void setContentView()
+    + abstract View getDecorView()
+    ....
+    + View findViewById()
+}
+class PhoneWindow{
+    - DecorView mDecor;
+    - ViewGroup mContentParent;
+}
+interface Window.Callback {
+    + boolean dispatchKeyEvent(KeyEvent event);
+    + boolean dispatchKeyShortcutEvent(KeyEvent event);
+    + boolean dispatchTouchEvent(MotionEvent event);
+}
+Activity o-- PhoneWindow
+PhoneWindow -right-|> Window
+Window o-right- Window.Callback
+
+@enduml

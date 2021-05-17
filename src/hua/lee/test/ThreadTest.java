@@ -1,5 +1,6 @@
 package hua.lee.test;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.*;
 
@@ -7,7 +8,16 @@ public class ThreadTest {
     private static volatile boolean a = false;
 
     public static void main(String[] args) throws InterruptedException {
-        parseInt("110086");
+        int b = 10;
+        System.out.println(b+=1);
+    }
+    private static void testThread() throws InterruptedException {
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(3,5,30,TimeUnit.MINUTES,new ArrayBlockingQueue<>(50));
+        for (int i = 0; i < 12; i++) {
+            Thread.sleep(50);
+            executor.submit(new TestRun(i));
+        }
+
     }
 
     private static void parseInt(String s) {
@@ -53,12 +63,12 @@ class TestRun implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("Thread-Num-" + index + "-running");
+        System.out.println(new Date() + "：Thread-Num-" + index + "-running");
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("Thread-Num-" + index + "-finish");
+        System.out.println(new Date() + "：Thread-Num-" + index + "-finish");
     }
 }

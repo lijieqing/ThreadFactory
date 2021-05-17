@@ -1,0 +1,15 @@
+@startuml
+
+state App {
+  WindowManagerGlobal -up-> Session : IWindowSession
+  state Window{
+    state W
+  }
+}
+
+state WMS {
+  state Session{
+  }
+  WindowState -down-> W : IWindow
+}
+@enduml
